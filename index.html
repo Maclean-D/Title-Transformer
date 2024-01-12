@@ -28,8 +28,7 @@
 
 </html>
 
-<md-filled-text-field label="OpenAI API Key" id="apikey" type="text" oninput="saveToCookies()"></md-filled-text-field>
-    <script src="src/apikey.js"></script>
+<md-filled-text-field label="OpenAI API Key" id="apikey" type="text"></md-filled-text-field>
     <br>
     <md-outlined-select id="modelSelect" style="margin-top: 1rem;">
         <md-select-option selected value="gpt-3.5-turbo">
@@ -54,12 +53,12 @@
     <script src="src/speechrecognition.js"></script>
 
     <div style="margin-top: -1.5rem; margin-bottom: 2rem;"></div>
-        <md-filled-button style="margin-top: 0.5rem;">
+        <md-filled-button id="shuffleButton" style="margin-top: 0.5rem;">
             Shuffle
             <svg slot="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M560-160v-80h104L537-367l57-57 126 126v-102h80v240H560Zm-344 0-56-56 504-504H560v-80h240v240h-80v-104L216-160Zm151-377L160-744l56-56 207 207-56 56Z"/></svg>
         </md-filled-button>
 
-        <md-filled-tonal-button style="margin-top: 0.5rem;">
+        <md-filled-tonal-button id="rewriteButton" style="margin-top: 0.5rem;">
             Rewrite
             <svg slot="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-80q-75 0-140.5-28.5t-114-77q-48.5-48.5-77-114T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-440q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-80Z"/></svg>
         </md-filled-tonal-button style="margin-top: 0.5rem;">
@@ -77,12 +76,68 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
-            const shortenButton = document.getElementById('shortenButton');
+            const description = document.getElementById('description-input').value;
+            const rewriteButton = document.getElementById('rewriteButton');
             const twistButton = document.getElementById('twistButton');
+            const shortenButton = document.getElementById('shortenButton');
             const titleInput = document.getElementById('titleInput');
             const apiKeyInput = document.getElementById('apikey');
             const responsesDiv = document.getElementById('responses');
 
+            rewriteButton.addEventListener('click', async () => {
+                const titleText = titleInput.value.trim();
+                const apiKey = apiKeyInput.value.trim();
+
+                if (titleText !== '' && apiKey !== '') {
+                    // Create the response div with a loading indicator
+                    const responseDiv = document.createElement('div');
+                    responseDiv.classList.add('secondary-container', 'on-secondary-container-text');
+                    responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem; vertical-align: top;';
+                    responseDiv.innerHTML = `
+                        <md-linear-progress four-color indeterminate></md-linear-progress>
+                        <div style="margin-left: 1rem; margin-right: 1rem;">
+                            <h3 class="body-large">Processing...</h3>
+                            <div class="rewritten-titles"></div>
+                        </div>
+                    `;
+                    responsesDiv.insertBefore(responseDiv, responsesDiv.firstChild);
+
+                    // Create an array of promises for the four API calls
+                    let promises = [];
+                    for (let i = 0; i < 4; i++) {
+                        promises.push(rewriteTitleWithOpenAI(titleText, apiKey));
+                    }
+
+                    // Execute all promises concurrently
+                    Promise.all(promises).then(results => {
+                        results.forEach(rewrittenTitle => {
+                            if (rewrittenTitle) {
+                                // Create a new element for each rewritten title
+                                let titleElement = document.createElement('h2');
+                                titleElement.classList.add('headline-small');
+                                titleElement.textContent = rewrittenTitle;
+                                responseDiv.querySelector('.rewritten-titles').appendChild(titleElement);
+                            } else {
+                                let errorElement = document.createElement('h2');
+                                errorElement.classList.add('headline-small');
+                                errorElement.textContent = 'Error: Could not twist the title.';
+                                responseDiv.querySelector('.twisted-titles').appendChild(errorElement);
+                            }
+                        });
+
+                        // Update status and remove the loading indicator
+                        responseDiv.querySelector('md-linear-progress').style.display = 'none';
+                        responseDiv.querySelector('h3').textContent = `Rewritten from: ${titleText}`;
+                    }).catch(error => {
+                        // Handle any errors that occur during the API calls
+                        responseDiv.querySelector('h3').textContent = 'Error occurred while rewriting the titles.';
+                        responseDiv.querySelector('md-linear-progress').style.display = 'none';
+                    });
+                } else {
+                    alert('Please enter a title and your OpenAI API key.');
+                }
+            });
+            
             twistButton.addEventListener('click', async () => {
                 const titleText = titleInput.value.trim();
                 const apiKey = apiKeyInput.value.trim();
@@ -91,7 +146,7 @@
                     // Create the response div with a loading indicator
                     const responseDiv = document.createElement('div');
                     responseDiv.classList.add('secondary-container', 'on-secondary-container-text');
-                    responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem;';
+                    responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem; vertical-align: top;';
                     responseDiv.innerHTML = `
                         <md-linear-progress four-color indeterminate></md-linear-progress>
                         <div style="margin-left: 1rem; margin-right: 1rem;">
@@ -145,7 +200,7 @@
                     // Create the response div with a loading indicator
                     const responseDiv = document.createElement('div');
                     responseDiv.classList.add('tertiary-container', 'on-tertiary-container-text');
-                    responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem;';
+                    responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem; vertical-align: top;';
                     responseDiv.innerHTML = `
                         <md-linear-progress four-color indeterminate></md-linear-progress>
                         <div style="margin-left: 1rem; margin-right: 1rem;">
@@ -172,6 +227,7 @@
             });
         });
     </script>
+    <script src="src/rewrite.js"></script>
     <script src="src/twist.js"></script>
     <script src="src/shorten.js"></script>
 

@@ -1,10 +1,10 @@
-async function twistTitleWithOpenAI(title, apiKey) {
+async function rewriteTitleWithOpenAI(title, apiKey) {
     try {
         // Retrieve the selected model from the dropdown
         const model = document.getElementById('modelSelect').value;
         const description = document.getElementById('description-input').value;
 
-        let messageContent = `Shorten the following in a super concise and snappy way: "${title}"`;
+        let messageContent = `Creatively rewrite the following while keeping a similar or shorter length: "${title}"`;
 
         // Append the description to the message if it's not empty
         if (description.trim().length > 0) {
