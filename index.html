@@ -28,7 +28,8 @@
 
 </html>
 
-<md-filled-text-field label="OpenAI API Key" id="apikey" type="text"></md-filled-text-field>
+<h4 class="label-large" style="margin-top: -0.5rem;">Paste <a href="https://platform.openai.com/api-keys" style="color: var(--md-sys-color-on-surface-variant);">your OpenAI API Key</a> into the box below to start transofrming!</h1>
+<md-filled-text-field label="OpenAI API Key" id="apikey" type="password"></md-filled-text-field>
     <br>
     <md-outlined-select id="modelSelect" style="margin-top: 1rem;">
         <md-select-option selected value="gpt-3.5-turbo">
@@ -77,12 +78,77 @@
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const description = document.getElementById('description-input').value;
+            const shuffleButton = document.getElementById('shuffleButton');
             const rewriteButton = document.getElementById('rewriteButton');
             const twistButton = document.getElementById('twistButton');
             const shortenButton = document.getElementById('shortenButton');
             const titleInput = document.getElementById('titleInput');
             const apiKeyInput = document.getElementById('apikey');
             const responsesDiv = document.getElementById('responses');
+
+            shuffleButton.addEventListener('click', async () => {
+                const titleText = titleInput.value.trim();
+                const apiKey = apiKeyInput.value.trim();
+
+                if (titleText !== '' && apiKey !== '') {
+                    // Define categories and their respective items
+                    const categories = {
+                        'Emotional': ['Positive', 'Outrageous', 'Dramatic'],
+                        'DisprovingExpectations': ['Challenging Assumption', 'Refuting Objections', 'Assertive'],
+                        'Interesting': ['Clever', 'Open Loop', 'Alliteration'],
+                        'CommonTropes': ['Listicle', 'FOMO', 'Truth']
+                    };
+
+                    // Shuffled text labels for each category
+                    const shuffledTextLabels = {
+                        'Emotional': 'Shuffled emotionally from:',
+                        'DisprovingExpectations': 'Shuffled by disproving expectations from:',
+                        'Interesting': 'Shuffled interestingly from:',
+                        'CommonTropes': 'Shuffled using common tropes from:'
+                    };
+
+                    // Iterate over each category
+                    Object.keys(categories).forEach(category => {
+                        // Create the response div for each category
+                        const responseDiv = document.createElement('div');
+                        responseDiv.classList.add('primary-container', 'on-primary-container-text');
+                        responseDiv.style = 'overflow-y: auto; border-radius: 1rem; display: inline-block; margin-right: 1rem; margin-bottom: 1rem; max-width: 27rem; vertical-align: top;';
+                        responseDiv.innerHTML = `
+                            <md-linear-progress four-color indeterminate></md-linear-progress>
+                            <div style="margin-left: 1rem; margin-right: 1rem;">
+                                <h3 class="body-large">Processing ${category}...</h3>
+                                <div class="shuffled-titles-${category}"></div>
+                            </div>
+                        `;
+                        responsesDiv.insertBefore(responseDiv, responsesDiv.firstChild);
+
+                        // Create an array of promises for the three API calls in each category
+                        let promises = categories[category].map(item => shuffleTitleWithOpenAI(titleText, apiKey, item));
+
+                        // Execute all promises concurrently
+                        Promise.all(promises).then(results => {
+                            results.forEach(shuffledTitle => {
+                                // Create a new element for each shuffled title
+                                let titleElement = document.createElement('h2');
+                                titleElement.classList.add('headline-small');
+                                titleElement.textContent = shuffledTitle;
+                                responseDiv.querySelector(`.shuffled-titles-${category}`).appendChild(titleElement);
+                            });
+
+                            // Update status and remove the loading indicator
+                            responseDiv.querySelector('md-linear-progress').style.display = 'none';
+                            responseDiv.querySelector('h3').innerHTML = `${shuffledTextLabels[category]} <i>${titleText}</i>`;
+                        }).catch(error => {
+                            // Handle any errors that occur during the API calls
+                            responseDiv.querySelector('h3').textContent = `Error occurred while shuffling the titles in ${category}.`;
+                            responseDiv.querySelector('md-linear-progress').style.display = 'none';
+                        });
+                    });
+                } else {
+                    alert('Please enter a title and your OpenAI API key.');
+                }
+            });
+
 
             rewriteButton.addEventListener('click', async () => {
                 const titleText = titleInput.value.trim();
@@ -127,7 +193,7 @@
 
                         // Update status and remove the loading indicator
                         responseDiv.querySelector('md-linear-progress').style.display = 'none';
-                        responseDiv.querySelector('h3').textContent = `Rewritten from: ${titleText}`;
+                        responseDiv.querySelector('h3').innerHTML = `Rewritten from: <i>${titleText}<i>`;
                     }).catch(error => {
                         // Handle any errors that occur during the API calls
                         responseDiv.querySelector('h3').textContent = 'Error occurred while rewriting the titles.';
@@ -181,7 +247,7 @@
 
                         // Update status and remove the loading indicator
                         responseDiv.querySelector('md-linear-progress').style.display = 'none';
-                        responseDiv.querySelector('h3').textContent = `Twisted from: ${titleText}`;
+                        responseDiv.querySelector('h3').innerHTML = `Twisted from: <i>${titleText}<i>`;
                     }).catch(error => {
                         // Handle any errors that occur during the API calls
                         responseDiv.querySelector('h3').textContent = 'Error occurred while twisting the titles.';
@@ -216,7 +282,7 @@
                     if (shortenedTitle) {
                         // Update the div with the shortened title and remove the loading indicator
                         responseDiv.querySelector('md-linear-progress').style.display = 'none';
-                        responseDiv.querySelector('h3').textContent = `Shortened from: ${titleText}`;
+                        responseDiv.querySelector('h3').innerHTML = `Shortened from: <i>${titleText}<i>`;
                         responseDiv.querySelector('h2').textContent = shortenedTitle;
                     } else {
                         responseDiv.querySelector('h3').textContent = 'Error: Could not shorten the title.';
@@ -227,6 +293,7 @@
             });
         });
     </script>
+    <script src="src/shuffle.js"></script>
     <script src="src/rewrite.js"></script>
     <script src="src/twist.js"></script>
     <script src="src/shorten.js"></script>
