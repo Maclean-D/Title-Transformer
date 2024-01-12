@@ -2,7 +2,7 @@
 ![Header](Header.png)
 Easily transform and create new titles for your YouTube Videos.
 Try it out [here](http://thatmacdaddy.me/title-transformer/).
-![Header](Mobile.png)
+<img src="Mobile.png" alt="Mobile" width="300">
 
 ## Setup
     1. Obtain an API key from [OpenAI](https://platform.openai.com/api-keys)
