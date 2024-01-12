@@ -1,8 +1,10 @@
 # Title Transformer
 ![Header](Header.png)
-<img src="Mobile1.png" alt="Mobile" width="260">
-<img src="Mobile2.png" alt="Mobile" width="260">
-<img src="Mobile3.png" alt="Mobile" width="260">
+Desktop
+<img src="Mobile1.png" alt="Mobile" width="265">
+<img src="Mobile2.png" alt="Mobile" width="265">
+<img src="Mobile3.png" alt="Mobile" width="265">
+Mobile
 
 Easily transform and create new titles for your YouTube Videos.
 Try it out [here](http://thatmacdaddy.me/title-transformer/).
