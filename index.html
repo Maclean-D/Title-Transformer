@@ -13,15 +13,16 @@
 </head>
 
 <body class="background on-background-text">
-      
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -1.5rem">
-        <h1 class="display-medium">Title Transformer</h1>
-        <div>
-            <a href="https://github.com/Maclean-D/title-transformer" target="_blank">
-                <md-icon-button>
-                    <i class="material-icons">info</i>
-                </md-icon-button>
-            </a>
+    <div style="background-color: var(--md-sys-color-surface-variant); margin-left: -0.5rem; margin-right: -0.5rem; margin-bottom: 2rem">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -1.5rem; margin-left: 0.5rem; margin-right: 0.5rem;">
+            <h1 class="display-medium on-surface-variant-text">Title Transformer</h1>
+            <div>
+                <a href="https://github.com/Maclean-D/title-transformer" target="_blank" style="margin-bottom: -2rem;">
+                    <md-icon-button style="margin-bottom: -2rem;">
+                        <i class="material-icons">info</i>
+                    </md-icon-button>
+                </a>
+            </div>
         </div>
     </div>
 </body>
@@ -40,11 +41,11 @@
         </md-select-option>
     </md-outlined-select>
 
-    <div class="input-container" style="margin-top: 1rem; width: 27rem; display: flex; align-items: center;">             
+    <div class="input-container" style="margin-top: 1rem; min-width: 27rem; display: flex; align-items: center;">             
         <textarea class="rounded-textbox" placeholder="Title" id="titleInput"></textarea>
     </div>
 
-    <div class="input-container" style="margin-top: 1rem; width: 27rem; display: flex; align-items: center;">             
+    <div class="input-container" style="margin-top: 1rem; min-width: 27rem; display: flex; align-items: center;">             
         <textarea class="rounded-textbox" placeholder="Video description (Optional)" id="description-input"></textarea>
         <md-icon-button class="mic">
             <i class="material-icons">mic</i>
