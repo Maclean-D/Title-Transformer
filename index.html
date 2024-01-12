@@ -13,7 +13,7 @@
 </head>
 
 <body class="background on-background-text">
-    <div style="background-color: var(--md-sys-color-surface-variant); margin-left: -0.5rem; margin-right: -0.5rem; margin-bottom: 2rem">
+    <div style="background-color: var(--md-sys-color-surface-variant); margin-left: -0.5rem; margin-right: -0.5rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: -1.5rem; margin-left: 0.5rem; margin-right: 0.5rem;">
             <h1 class="display-medium on-surface-variant-text">Title Transformer</h1>
             <div>
@@ -25,13 +25,32 @@
             </div>
         </div>
     </div>
+
+    <!-- API Dialog -->
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const dialog = document.getElementById('APIDialog');
+            dialog.show();
+        });
+    </script>
+    <md-dialog id="APIDialog">
+        <div slot="headline" style="color: var(--md-sys-color-on-surface-light);">
+            <span style="flex: 1;">API Setup</span>
+        </div>
+        <form slot="content" id="api-form" method="dialog">
+            <div style="margin-bottom: 0.5rem;">
+                <h4 class="label-large" style="margin-top: -0.5rem;">Paste your <a href="https://platform.openai.com/api-keys" style="color: var(--md-sys-color-on-surface-variant);">OpenAI API Key</a> into the box below to start transofrming! <br> It costs roughly $0.01 per 100 titles generated.</h1>
+                <md-filled-text-field label="OpenAI API Key" id="apikey" type="password"></md-filled-text-field>
+            </div>
+        </form>
+        <div slot="actions">
+            <md-filled-button form="api-form" value="save">Save</md-filled-button>
+        </div>
+    </md-dialog>
 </body>
 
 </html>
 
-<h4 class="label-large" style="margin-top: -0.5rem;">Paste <a href="https://platform.openai.com/api-keys" style="color: var(--md-sys-color-on-surface-variant);">your OpenAI API Key</a> into the box below to start transofrming!</h1>
-<md-filled-text-field label="OpenAI API Key" id="apikey" type="password"></md-filled-text-field>
-    <br>
     <md-outlined-select id="modelSelect" style="margin-top: 1rem;">
         <md-select-option selected value="gpt-3.5-turbo">
             <div slot="headline">GPT 3.5 Turbo (Fastest & Cheapest)</div>
