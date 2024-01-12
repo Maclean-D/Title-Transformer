@@ -28,7 +28,8 @@
 
 </html>
 
-    <md-filled-text-field label="OpenAI API Key" id="apikey" type="text"></md-filled-text-field>
+<md-filled-text-field label="OpenAI API Key" id="apikey" type="text" oninput="saveToCookies()"></md-filled-text-field>
+    <script src="src/apikey.js"></script>
     <br>
     <md-outlined-select id="modelSelect" style="margin-top: 1rem;">
         <md-select-option selected value="gpt-3.5-turbo">
