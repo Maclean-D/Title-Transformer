@@ -1,9 +1,10 @@
 # Title Transformer
 ![Header](Header.png)
 Easily transform and create new titles for your YouTube Videos.
- Try it out [here](http://thatmacdaddy.me/title-transformer/).
+Try it out [here](http://thatmacdaddy.me/title-transformer/).
+![Header](mobile.png)
 
- ## Setup
+## Setup
     1. Obtain an API key from [OpenAI](https://platform.openai.com/api-keys)
 ```
 It costs roughly $0.01 per 100 titles genereated or so.
